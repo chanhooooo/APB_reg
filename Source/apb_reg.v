@@ -29,7 +29,7 @@ module apb_regs #(
     wire apb_write = psel & penable & pwrite;
     wire apb_read  = psel & ~pwrite;
 
-    assign pready = (psel && penable) ? 1'b1 : 1'b0; 
+    assign pready = 1'b1; 
     assign pslverr = 1'b0;
 
     always @(posedge pclk or negedge presetn) begin

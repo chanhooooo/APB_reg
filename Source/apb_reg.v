@@ -15,6 +15,10 @@ module apb_regs #(
     input      [DW-1:0]    pwdata,
     output reg [DW-1:0]    prdata,
     output                 pslverr
+
+
+
+    //user ports
 );
 
     reg [DW-1:0] slv_reg0;

@@ -29,20 +29,7 @@ module apb_regs #(
     wire apb_write = psel & penable & pwrite;
     wire apb_read  = psel & ~pwrite;
 
-    reg pready_reg;
-    assign pready = pready_reg;
-
-    always @(posedge pclk or negedge presetn) begin
-        if (!presetn)
-            pready_reg <= 1'b0;
-        else begin
-            if (psel && penable)
-                pready_reg <= 1'b1;
-            else
-                pready_reg <= 1'b0;
-        end
-    end
-
+    assign pready = (psel && penable) ? 1'b1 : 1'b0; 
     assign pslverr = 1'b0;
 
     always @(posedge pclk or negedge presetn) begin
@@ -67,16 +54,14 @@ module apb_regs #(
         end
     end
 
-    always @(posedge pclk or negedge presetn) begin
-        if (!presetn)
-            prdata <= 32'b0;
-        else if (apb_read) begin
+    always @(*) begin
+        if (psel && !pwrite) begin
             case (paddr)
-                5'h00: prdata <= slv_reg0;
-                5'h04: prdata <= slv_reg1;
-                5'h08: prdata <= slv_reg2;
-                5'h0C: prdata <= slv_reg3;
-                default: prdata <= 32'b0;
+                5'h00: prdata = slv_reg0;
+                5'h04: prdata = slv_reg1;
+                5'h08: prdata = slv_reg2;
+                5'h0C: prdata = slv_reg3;
+                default: prdata = 32'b0;
             endcase
         end
     end

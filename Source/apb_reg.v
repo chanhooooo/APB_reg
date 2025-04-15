@@ -13,7 +13,7 @@ module apb_regs #(
     input                  pwrite,
     output                 pready,
     input      [DW-1:0]    pwdata,
-    output reg [DW-1:0]    prdata,
+    output reg    [DW-1:0]    prdata,
     output                 pslverr
 
 
@@ -54,16 +54,19 @@ module apb_regs #(
         end
     end
 
-    always @(*) begin
-        if (psel && !pwrite) begin
-            case (paddr)
-                5'h00: prdata = slv_reg0;
-                5'h04: prdata = slv_reg1;
-                5'h08: prdata = slv_reg2;
-                5'h0C: prdata = slv_reg3;
-                default: prdata = 32'b0;
-            endcase
-        end
+    // Register read logic
+always @(posedge pclk or negedge presetn) begin
+    if (!presetn) begin
+        prdata <= {DW{1'b0}};
+    end else if (apb_read) begin
+        case (paddr)
+            5'h00: prdata <= slv_reg0;
+            5'h04: prdata <= slv_reg1;
+            5'h08: prdata <= slv_reg2;
+            5'h0C: prdata <= slv_reg3;
+            default: prdata <= {DW{1'b0}};
+        endcase
     end
+end
 
 endmodule
